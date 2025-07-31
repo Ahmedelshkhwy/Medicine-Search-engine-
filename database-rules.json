@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "products": {
+      ".read": true,
+      ".write": true,
+      ".validate": "newData.hasChildren(['name', 'code', 'branchCode', 'demandLevel'])"
+    },
+    "test": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}

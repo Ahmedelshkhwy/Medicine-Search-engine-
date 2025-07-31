@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تشخيص قاعدة البيانات</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        pre { background: #f8f9fa; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 تشخيص قاعدة البيانات</h1>
+    
+    <div class="debug-section">
+        <h3>1. تحميل قاعدة البيانات</h3>
+        <button onclick="loadDatabase()">تحميل قاعدة البيانات</button>
+        <div id="loadResult"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>2. تحليل تنسيق البيانات</h3>
+        <button onclick="analyzeData()">تحليل البيانات</button>
+        <div id="analyzeResult"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>3. البحث المباشر</h3>
+        <input type="text" id="searchInput" placeholder="اكتب للبحث..." value="panadol">
+        <button onclick="directSearch()">بحث مباشر</button>
+        <div id="searchResult"></div>
+    </div>
+
+    <script>
+        let rawData = null;
+        
+        async function loadDatabase() {
+            const result = document.getElementById('loadResult');
+            result.innerHTML = 'جاري التحميل...';
+            
+            try {
+                const response = await fetch('./products-db.json');
+                if (response.ok) {
+                    rawData = await response.json();
+                    result.innerHTML = `✅ تم تحميل قاعدة البيانات بنجاح<br>نوع البيانات: ${typeof rawData}<br>هل هي مصفوفة: ${Array.isArray(rawData)}`;
+                    result.className = 'debug-section success';
+                } else {
+                    result.innerHTML = `❌ فشل في التحميل (${response.status})`;
+                    result.className = 'debug-section error';
+                }
+            } catch (error) {
+                result.innerHTML = `❌ خطأ: ${error.message}`;
+                result.className = 'debug-section error';
+            }
+        }
+        
+        function analyzeData() {
+            const result = document.getElementById('analyzeResult');
+            
+            if (!rawData) {
+                result.innerHTML = '❌ يرجى تحميل قاعدة البيانات أولاً';
+                result.className = 'debug-section error';
+                return;
+            }
+            
+            try {
+                let analysis = `<h4>تحليل البيانات:</h4>`;
+                analysis += `<p><strong>نوع البيانات:</strong> ${typeof rawData}</p>`;
+                analysis += `<p><strong>هل هي مصفوفة:</strong> ${Array.isArray(rawData)}</p>`;
+                
+                if (Array.isArray(rawData)) {
+                    analysis += `<p><strong>عدد العناصر:</strong> ${rawData.length}</p>`;
+                    
+                    if (rawData.length > 0) {
+                        const sample = rawData[0];
+                        const keys = Object.keys(sample);
+                        
+                        analysis += `<p><strong>عدد الحقول في العينة الأولى:</strong> ${keys.length}</p>`;
+                        analysis += `<p><strong>الحقول المتاحة:</strong></p>`;
+                        analysis += `<ul>`;
+                        keys.forEach(key => {
+                            const value = sample[key];
+                            const type = typeof value;
+                            const preview = String(value).substring(0, 50) + (String(value).length > 50 ? '...' : '');
+                            analysis += `<li><strong>${key}</strong> (${type}): ${preview}</li>`;
+                        });
+                        analysis += `</ul>`;
+                    }
+                } else {
+                    analysis += `<p><strong>مفاتيح الكائن:</strong></p>`;
+                    const keys = Object.keys(rawData);
+                    analysis += `<ul>`;
+                    keys.forEach(key => {
+                        const value = rawData[key];
+                        const type = typeof value;
+                        analysis += `<li><strong>${key}</strong> (${type}): ${Array.isArray(value) ? `${value.length} عنصر` : String(value).substring(0, 50)}</li>`;
+                    });
+                    analysis += `</ul>`;
+                }
+                
+                // البحث عن panadol
+                let panadolItems = [];
+                if (Array.isArray(rawData)) {
+                    panadolItems = rawData.filter(item => {
+                        const searchableText = JSON.stringify(item).toLowerCase();
+                        return searchableText.includes('panadol');
+                    });
+                } else {
+                    // إذا كانت البيانات كائن، نبحث في جميع القيم
+                    const searchInObject = (obj) => {
+                        const results = [];
+                        for (const key in obj) {
+                            if (typeof obj[key] === 'object' && obj[key] !== null) {
+                                results.push(...searchInObject(obj[key]));
+                            } else if (typeof obj[key] === 'string' && obj[key].toLowerCase().includes('panadol')) {
+                                results.push(obj);
+                            }
+                        }
+                        return results;
+                    };
+                    panadolItems = searchInObject(rawData);
+                }
+                
+                analysis += `<h4>البحث عن "panadol":</h4>`;
+                analysis += `<p>تم العثور على ${panadolItems.length} عنصر يحتوي على "panadol"</p>`;
+                
+                if (panadolItems.length > 0) {
+                    analysis += `<h5>أمثلة:</h5>`;
+                    panadolItems.slice(0, 3).forEach((item, index) => {
+                        analysis += `<details><summary>عنصر ${index + 1}</summary><pre>${JSON.stringify(item, null, 2)}</pre></details>`;
+                    });
+                }
+                
+                result.innerHTML = analysis;
+                result.className = 'debug-section success';
+                
+            } catch (error) {
+                result.innerHTML = `❌ خطأ في التحليل: ${error.message}`;
+                result.className = 'debug-section error';
+            }
+        }
+        
+        function directSearch() {
+            const result = document.getElementById('searchResult');
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!rawData) {
+                result.innerHTML = '❌ يرجى تحميل قاعدة البيانات أولاً';
+                result.className = 'debug-section error';
+                return;
+            }
+            
+            if (!query) {
+                result.innerHTML = '❌ يرجى كتابة نص للبحث';
+                result.className = 'debug-section error';
+                return;
+            }
+            
+            try {
+                let results = [];
+                
+                if (Array.isArray(rawData)) {
+                    results = rawData.filter(item => {
+                        const searchableText = JSON.stringify(item).toLowerCase();
+                        return searchableText.includes(query);
+                    });
+                } else {
+                    // البحث في الكائن
+                    const searchInObject = (obj) => {
+                        const results = [];
+                        for (const key in obj) {
+                            if (typeof obj[key] === 'object' && obj[key] !== null) {
+                                results.push(...searchInObject(obj[key]));
+                            } else if (typeof obj[key] === 'string' && obj[key].toLowerCase().includes(query)) {
+                                results.push(obj);
+                            }
+                        }
+                        return results;
+                    };
+                    results = searchInObject(rawData);
+                }
+                
+                if (results.length > 0) {
+                    let output = `<h4>تم العثور على ${results.length} نتيجة:</h4>`;
+                    results.slice(0, 5).forEach((item, index) => {
+                        const name = item.name || item.productName || 'غير محدد';
+                        const code = item.code || item.id || 'غير محدد';
+                        output += `<p><strong>${index + 1}.</strong> ${name} (${code})</p>`;
+                    });
+                    
+                    if (results.length > 5) {
+                        output += `<p>... و ${results.length - 5} نتيجة أخرى</p>`;
+                    }
+                    
+                    result.innerHTML = output;
+                    result.className = 'debug-section success';
+                } else {
+                    result.innerHTML = `❌ لم يتم العثور على نتائج للبحث: "${query}"`;
+                    result.className = 'debug-section error';
+                }
+                
+            } catch (error) {
+                result.innerHTML = `❌ خطأ في البحث: ${error.message}`;
+                result.className = 'debug-section error';
+            }
+        }
+    </script>
+</body>
+</html> 
