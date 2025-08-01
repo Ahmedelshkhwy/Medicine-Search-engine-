@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الأدمن - نظام إدارة المنتجات</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="admin-style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <div class="header-content">
+                <h1><i class="fas fa-user-shield"></i> لوحة تحكم الأدمن</h1>
+                <p>مراقبة ومتابعة البيانات المباشرة</p>
+                <div class="live-indicator">
+                    <i class="fas fa-circle"></i>
+                    <span>البيانات المباشرة</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <!-- إحصائيات سريعة -->
+            <div class="stats-grid">
+                <div class="stat-card urgent">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="urgentCount">0</h3>
+                        <p>مطلوب جداً</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card needed">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="neededCount">0</h3>
+                        <p>مطلوب</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card scheduled">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="scheduledCount">0</h3>
+                        <p>مطلوب بعد 3 أشهر</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card new-items">
+                    <div class="stat-icon">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="newCount">0</h3>
+                        <p>منتجات جديدة</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- أدوات التحكم -->
+            <div class="control-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-sliders-h"></i> أدوات التحكم</h2>
+                </div>
+                
+                <div class="controls">
+                    <div class="filter-controls">
+                        <label for="demandFilter">تصفية حسب مستوى الاحتياج:</label>
+                        <select id="demandFilter">
+                            <option value="">جميع المستويات</option>
+                            <option value="urgent">مطلوب جداً</option>
+                            <option value="needed">مطلوب</option>
+                            <option value="scheduled">مطلوب بعد 3 أشهر</option>
+                            <option value="new">جديد</option>
+                        </select>
+                    </div>
+                    
+                    <div class="search-controls">
+                        <label for="searchInput">البحث في المنتجات:</label>
+                        <input type="text" id="searchInput" placeholder="ابحث بالاسم أو الكود...">
+                    </div>
+                    
+                    <div class="action-controls">
+                        <button id="refreshBtn" class="btn btn-primary">
+                            <i class="fas fa-sync-alt"></i>
+                            تحديث البيانات
+                        </button>
+                        
+                        <button id="exportExcelBtn" class="btn btn-success">
+                            <i class="fas fa-file-excel"></i>
+                            تصدير Excel
+                        </button>
+                        
+                        <button id="exportBtn" class="btn btn-secondary">
+                            <i class="fas fa-file-csv"></i>
+                            تصدير CSV
+                        </button>
+                        
+                        <button id="clearAllBtn" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i>
+                            حذف جميع البيانات
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- جدول البيانات المتقدم -->
+            <div class="advanced-table-section">
+                <div class="table-header">
+                    <h2><i class="fas fa-table"></i> جميع المنتجات</h2>
+                    <div class="table-stats">
+                        <span>إجمالي: <strong id="totalItems">0</strong></span>
+                        <span>معروض: <strong id="filteredItems">0</strong></span>
+                    </div>
+                </div>
+                
+                <div class="advanced-table-container">
+                    <table class="advanced-table">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="name">
+                                    <i class="fas fa-tag"></i> اسم المنتج
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th class="sortable" data-sort="code">
+                                    <i class="fas fa-barcode"></i> كود المنتج
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th class="sortable" data-sort="branchCode">
+                                    <i class="fas fa-store"></i> كود الفرع
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th class="sortable" data-sort="demandLevel">
+                                    <i class="fas fa-chart-line"></i> مستوى الاحتياج
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th class="sortable" data-sort="timestamp">
+                                    <i class="fas fa-clock"></i> تاريخ الإضافة
+                                    <i class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th>
+                                    <i class="fas fa-cogs"></i> الإجراءات
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                            <!-- البيانات ستظهر هنا -->
+                        </tbody>
+                    </table>
+                    
+                    <div id="adminNoData" class="no-data" style="display: none;">
+                        <i class="fas fa-database"></i>
+                        <p>لا توجد بيانات متوفرة</p>
+                        <small>ستظهر البيانات هنا فور إضافتها من صفحة المستخدمين</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- رابط العودة -->
+            <div class="back-link">
+                <a href="../index.html" class="btn btn-back">
+                    <i class="fas fa-arrow-right"></i>
+                    العودة للصفحة الرئيسية
+                </a>
+            </div>
+        </main>
+
+        <!-- رسائل التنبيه -->
+        <div id="adminNotification" class="notification"></div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
