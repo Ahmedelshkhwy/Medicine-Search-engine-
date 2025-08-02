@@ -3,237 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة احتياج المنتجات</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <title>نظام دخول المدراء والمستخدمين</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <!-- رأس الصفحة -->
-        <div class="header">
-            <div class="header-content">
-                <h1><i class="fas fa-clipboard-list"></i> نظام إدارة احتياج المنتجات</h1>
-                <p>نظام موحد مع بحث ذكي وإدارة شاملة - شبكة الشافي</p>
-                
-                <!-- ملاحظة النظام المشترك -->
-                <div class="shared-system-notice">
-                    <i class="fas fa-users"></i>
-                    <span>نظام مشترك: جميع الفروع (1-40) تشارك في عرض وإدارة المنتجات</span>
-                </div>
-                
-                <!-- معلومات قاعدة البيانات -->
-                <div id="dbStatus" class="db-status">
-                    <i class="fas fa-database"></i> جاري تحميل النظام...
-                </div>
-                
-                <!-- اختيار الفرع -->
-                <div class="branch-selector">
-                    <div class="branch-input-group">
-                        <label for="branchSelector">
-                            <i class="fas fa-store"></i>
-                            اختر رقم الفرع <span class="required">*</span>
-                        </label>
-                        <select id="branchSelector" class="form-control" style="padding: 12px; font-size: 16px; min-height: 50px;">
-                            <option value="">اختر الفرع</option>
-                            <!-- سيتم إنشاء الخيارات بـ JavaScript -->
-                        </select>
-                        
-                        <!-- العنصر المفقود لعرض الفرع المختار -->
-                        <div id="selectedBranch" style="display: none;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <main class="main-content">
-            <!-- قسم إدخال البيانات -->
-            <div class="form-section">
-                <div class="form-container">
-                    <form id="productForm" class="product-form">
-                        <!-- البحث الذكي -->
-                        <div class="import-section">
-                            <div class="form-group">
-                                <label for="smartSearch">
-                                    <i class="fas fa-bolt"></i>
-                                    البحث الذكي في المنتجات (اختياري)
-                                </label>
-                                <div class="search-container">
-                                    <input type="text" id="smartSearch" placeholder="ابحث بالاسم أو الكود... (بحث فوري)">
-                                    <!-- حقل البحث المفقود -->
-                                    <input type="text" id="productSearch" style="display: none;">
-                                    <i class="fas fa-search search-icon"></i>
-                                    <div id="searchResults" class="search-results"></div>
-                                </div>
-                                <div class="search-stats" id="searchStats">
-                                    💡 اكتب للبحث الفوري في قاعدة البيانات المحلية
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- عرض المنتج المحدد -->
-                        <div id="selectedProductDisplay" style="display: none;" class="selected-product-display">
-                            <div class="selected-product-card">
-                                <h4><i class="fas fa-check-circle"></i> المنتج المحدد</h4>
-                                <div id="selectedProductInfo"></div>
-                                <button type="button" onclick="productManager.clearSelectedProduct()" class="btn-clear">
-                                    <i class="fas fa-times"></i> إلغاء الاختيار
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- العنصر المفقود لـ selectedProduct -->
-                        <div id="selectedProduct" style="display: none;"></div>
-
-                        <!-- العنصر المفقود لرسائل التحقق -->
-                        <div id="validationMessage" style="display: none;" class="validation-message"></div>
-
-                        <!-- حقول البيانات -->
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="productName">
-                                    <i class="fas fa-tag"></i>
-                                    اسم المنتج <span class="required">*</span>
-                                </label>
-                                <input type="text" id="productName" name="productName" placeholder="أدخل اسم المنتج" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="productCode">
-                                    <i class="fas fa-barcode"></i>
-                                    كود الصنف <span class="required">*</span>
-                                </label>
-                                <input type="text" id="productCode" name="productCode" placeholder="أدخل كود المنتج" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="productPrice">
-                                    <i class="fas fa-money-bill"></i>
-                                    آخر سعر بيع
-                                </label>
-                                <input type="number" id="productPrice" name="productPrice" placeholder="0.00" min="0" step="0.01">
-                                                                <small class="helper-text">بالريال السعودي</small>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="demandLevel">
-                                    <i class="fas fa-chart-line"></i>
-                                    مستوى الاحتياج <span class="required">*</span>
-                                </label>
-                                <select id="demandLevel" name="demandLevel" required>
-                                    <option value="">اختر مستوى الاحتياج</option>
-                                    <option value="urgent">مطلوب جداً (عاجل)</option>
-                                    <option value="needed">مطلوب (عادي)</option>
-                                    <option value="scheduled">مطلوب بعد 3 أشهر</option>
-                                    <option value="new">جديد</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- أزرار الإجراءات -->
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> حفظ المنتج
-                            </button>
-                            <button type="reset" class="btn btn-secondary">
-                                <i class="fas fa-undo"></i> إعادة تعيين
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- قسم عرض البيانات -->
-            <div class="data-section">
-                <div class="data-container">
-                    <div class="section-header">
-                        <h2><i class="fas fa-list"></i> منتجات جميع فروع الشافي</h2>
-                        <div class="header-actions">
-                            <a href="admin/" class="btn btn-admin">
-                                <i class="fas fa-user-shield"></i> لوحة الأدمن
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- إحصائيات سريعة -->
-                    <div class="stats">
-                        <div class="stat-item">
-                            <h3 id="totalCount">0</h3>
-                            <p>إجمالي المنتجات</p>
-                        </div>
-                        <div class="stat-item urgent">
-                            <h3 id="urgentCount">0</h3>
-                            <p>مطلوب جداً</p>
-                        </div>
-                        <div class="stat-item needed">
-                            <h3 id="neededCount">0</h3>
-                            <p>مطلوب</p>
-                        </div>
-                        <div class="stat-item scheduled">
-                            <h3 id="scheduledCount">0</h3>
-                            <p>مطلوب بعد 3 أشهر</p>
-                        </div>
-                    </div>
-
-                    <!-- جدول المنتجات -->
-                    <div class="table-container">
-                        <table class="products-table">
-                            <thead>
-                                <tr>
-                                    <th>اسم المنتج</th>
-                                    <th>كود المنتج</th>
-                                    <th>السعر (ريال)</th>
-                                    <th>الفرع</th>
-                                    <th>مستوى الاحتياج</th>
-                                    <th>التاريخ</th>
-                                    <th>الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsTableBody">
-                                <tr>
-                                    <td colspan="7" class="no-data">
-                                        <i class="fas fa-spinner fa-spin"></i>
-                                        <p>جاري تحميل البيانات...</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        
-                        <div id="noData" class="no-data" style="display: none;">
-                            <i class="fas fa-store-alt"></i>
-                            <p>لا توجد منتجات من أي فرع بعد</p>
-                            <small>ستظهر هنا منتجات جميع فروع الشافي (1-40)</small>
-                            <br>
-                            <small>كل فرع يمكنه رؤية طلبات جميع الفروع الأخرى</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- رسائل التنبيه المفقودة -->
-    <div id="notification" class="notification"></div>
-
-    <!-- تحميل نظام البحث المحلي أولاً -->
-    <script type="module" src="local-search.js"></script>
-    <script type="module" src="app.js"></script>
+    <!-- محتوى الصفحة سيتم إنشاؤه ديناميكياً بواسطة JavaScript -->
     
-    <!-- تجربة تشغيل مباشر -->
+    <!-- تحميل أنظمة تسجيل الدخول -->
+    <script src="userlogin.js"></script>
+    <script src="admin/adminlogin.js"></script>
+    
     <script>
-        // محاولة تحميل Firebase من CDN مباشرة
-        console.log('🔗 تحميل Firebase من CDN...');
-        console.log('🔍 تحميل نظام البحث المحلي...');
-    </script>
-    <script>
-        // إشارة أن النظام جاهز
-        console.log('🎯 النظام الموحد جاهز للعمل!');
-        
-        // إنتظار تحميل DOM ثم تهيئة التطبيق
+        // تهيئة النظام
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 DOM محمل - سيتم تهيئة التطبيق عبر app.js');
+            // عرض تسجيل دخول المستخدم بشكل افتراضي
+            userLogin.showLogin();
+        });
+        
+        // التعامل مع رؤية الصفحة لحالة الاتصال بالإنترنت
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // المستخدم انتقل بعيداً عن الصفحة
+                if (userLogin.isLoggedIn) {
+                    userLogin.logUserActivity('User went inactive');
+                }
+            } else {
+                // المستخدم عاد إلى الصفحة
+                if (userLogin.isLoggedIn) {
+                    userLogin.logUserActivity('User became active');
+                    userLogin.updateOnlineUsersList();
+                }
+            }
+        });
+        
+        // التعامل مع مغادرة الصفحة
+        window.addEventListener('beforeunload', function() {
+            if (userLogin.isLoggedIn) {
+                userLogin.logout();
+            }
+            if (adminLogin.isLoggedIn) {
+                adminLogin.logout();
+            }
         });
     </script>
 </body>
-</html> 
+</html>
