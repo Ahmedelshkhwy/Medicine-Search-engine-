@@ -8,8 +8,81 @@
     <link rel="stylesheet" href="admin-style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .login-box h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            direction: ltr;
+            text-align: center;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .login-box button:hover {
+            background: #5a6fd8;
+        }
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .main-admin {
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    <!-- شاشة تسجيل الدخول للأدمن -->
+    <div id="adminLoginContainer" class="login-container">
+        <div class="login-box">
+            <h2><i class="fas fa-user-shield"></i> دخول الأدمن</h2>
+            <p>يرجى إدخال كلمة المرور للوصول إلى لوحة التحكم</p>
+            <input type="password" id="adminPasswordInput" placeholder="كلمة المرور" maxlength="20">
+            <button onclick="checkAdminPassword()">دخول</button>
+            <div id="adminErrorMessage" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم الرئيسية -->
+    <div id="mainAdmin" class="main-admin">
     <div class="admin-container">
         <header class="admin-header">
             <div class="header-content">
@@ -177,6 +250,40 @@
         <!-- رسائل التنبيه -->
         <div id="adminNotification" class="notification"></div>
     </div>
+    </div>
+
+    <!-- نظام تسجيل الدخول للأدمن -->
+    <script>
+        function checkAdminPassword() {
+            const password = document.getElementById('adminPasswordInput').value;
+            const errorMessage = document.getElementById('adminErrorMessage');
+            
+            if (password === 'user%97') {
+                document.getElementById('adminLoginContainer').style.display = 'none';
+                document.getElementById('mainAdmin').style.display = 'block';
+                sessionStorage.setItem('adminAuthenticated', 'true');
+            } else {
+                errorMessage.textContent = 'كلمة المرور غير صحيحة';
+                errorMessage.style.display = 'block';
+                document.getElementById('adminPasswordInput').value = '';
+            }
+        }
+        
+        // التحقق من الجلسة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('adminAuthenticated') === 'true') {
+                document.getElementById('adminLoginContainer').style.display = 'none';
+                document.getElementById('mainAdmin').style.display = 'block';
+            }
+        });
+        
+        // تسجيل الدخول بالضغط على Enter
+        document.getElementById('adminPasswordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAdminPassword();
+            }
+        });
+    </script>
 
     <script type="module" src="admin.js"></script>
 </body>
