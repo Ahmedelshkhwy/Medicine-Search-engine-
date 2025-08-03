@@ -6,8 +6,81 @@
     <title>نظام إدارة احتياج المنتجات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .login-box h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            direction: ltr;
+            text-align: center;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .login-box button:hover {
+            background: #5a6fd8;
+        }
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .main-app {
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    <!-- شاشة تسجيل الدخول -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-box">
+            <h2><i class="fas fa-lock"></i> تسجيل الدخول</h2>
+            <p>يرجى إدخال كلمة المرور للوصول إلى النظام</p>
+            <input type="password" id="passwordInput" placeholder="كلمة المرور" maxlength="20">
+            <button onclick="checkPassword()">دخول</button>
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- التطبيق الرئيسي -->
+    <div id="mainApp" class="main-app">
     <div class="container">
         <!-- رأس الصفحة -->
         <div class="header">
@@ -212,9 +285,43 @@
             </div>
         </main>
     </div>
+    </div>
 
     <!-- رسائل التنبيه المفقودة -->
     <div id="notification" class="notification"></div>
+
+    <!-- نظام تسجيل الدخول -->
+    <script>
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (password === 'user%97') {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                sessionStorage.setItem('authenticated', 'true');
+            } else {
+                errorMessage.textContent = 'كلمة المرور غير صحيحة';
+                errorMessage.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+        
+        // التحقق من الجلسة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('authenticated') === 'true') {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+            }
+        });
+        
+        // تسجيل الدخول بالضغط على Enter
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
 
     <!-- تحميل نظام البحث المحلي أولاً -->
     <script type="module" src="local-search.js"></script>
