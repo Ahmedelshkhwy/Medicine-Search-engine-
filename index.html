@@ -70,7 +70,11 @@
 <body>
     <!-- شاشة تسجيل الدخول -->
     <div id="loginContainer" class="login-container">
+        <video class="login-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+            <source src="assets/login-background.mp4" type="video/mp4">
+        </video>
         <div class="login-box">
+            <img src="assets/alfarabi-brand.webp" alt="Al Farabi Pharmacy" class="login-brand-logo">
             <h2><i class="fas fa-lock"></i> تسجيل الدخول</h2>
             <p>يرجى إدخال كلمة المرور للوصول إلى النظام</p>
             <input type="password" id="passwordInput" placeholder="كلمة المرور" maxlength="20">
@@ -85,6 +89,7 @@
         <!-- رأس الصفحة -->
         <div class="header">
             <div class="header-content">
+                <img src="assets/alfarabi-brand.webp" alt="Al Farabi Pharmacy" class="brand-logo">
                 <h1><i class="fas fa-clipboard-list"></i> نظام إدارة احتياج المنتجات</h1>
                 <p>نظام موحد مع بحث ذكي وإدارة شاملة - شبكة الفارابى</p>
                 
@@ -284,6 +289,10 @@
                 </div>
             </div>
         </main>
+        <footer class="site-footer">
+            <p>صيدليات الفارابي، رعاية أوثق ودواء أقرب لكل فرع.</p>
+            <small>Powered by Ahmed Elshkhwy</small>
+        </footer>
     </div>
     </div>
 
@@ -343,4 +352,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
