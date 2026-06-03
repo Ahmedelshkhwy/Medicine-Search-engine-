@@ -88,11 +88,31 @@
     <div class="container">
         <!-- رأس الصفحة -->
         <div class="header">
+            <video class="header-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+                <source src="https://raw.githubusercontent.com/Ahmedelshkhwy/Medicine-Search-engine-/b5b85d4/assets/login-background.mp4" type="video/mp4">
+            </video>
             <div class="header-content">
                 <img src="assets/alfarabi-brand.webp" alt="Al Farabi Pharmacy" class="brand-logo">
                 <h1><i class="fas fa-clipboard-list"></i> نظام إدارة احتياج المنتجات</h1>
                 <p>نظام موحد مع بحث ذكي وإدارة شاملة - شبكة الفارابى</p>
-                
+                <div class="hero-badges" aria-label="مميزات النظام">
+                    <span>
+                        <i class="fas fa-network-wired"></i>
+                        <strong>40 فرع</strong>
+                        <small>اتصال موحد</small>
+                    </span>
+                    <span>
+                        <i class="fas fa-magnifying-glass-chart"></i>
+                        <strong>بحث ذكي</strong>
+                        <small>وصول أسرع للصنف</small>
+                    </span>
+                    <span>
+                        <i class="fas fa-bolt"></i>
+                        <strong>متابعة فورية</strong>
+                        <small>قرار أسرع للإدارة</small>
+                    </span>
+                </div>
+
                 <!-- ملاحظة النظام المشترك -->
                 <div class="shared-system-notice">
                     <i class="fas fa-users"></i>
@@ -124,6 +144,23 @@
         </div>
 
         <main class="main-content">
+            <section class="pos-feature-section" aria-labelledby="posFeatureTitle">
+                <div class="pos-feature-copy">
+                    <span class="feature-kicker"><i class="fas fa-chart-pie"></i> ميزة جديدة للفروع</span>
+                    <h2 id="posFeatureTitle">حلّل Stock فرعك بدقة قبل طلب الأصناف</h2>
+                    <p>ارفع 3 ملفات من نظام المبيعات والمخزون، واحصل على تحليل متقدم بتقنية Python وFlask يساعدك تعرف الراكد، السريع، وخطر نفاد المخزون.</p>
+                </div>
+                <div class="pos-feature-steps">
+                    <span><strong>1</strong> Product Activity</span>
+                    <span><strong>2</strong> Stock</span>
+                    <span><strong>3</strong> Stock Cost</span>
+                </div>
+                <a class="btn btn-primary pos-feature-action" href="https://pharmacy-pos-cockpit.onrender.com/" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-arrow-up-right-from-square"></i>
+                    افتح تحليل POS المتقدم
+                </a>
+            </section>
+
             <!-- قسم إدخال البيانات -->
             <div class="form-section">
                 <div class="form-container">
