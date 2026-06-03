@@ -30,7 +30,7 @@ class ProductManager {
             for (let i = 1; i <= 40; i++) {
                 const option = document.createElement('option');
                 option.value = i.toString();
-                option.textContent = `فرع الشافي ${i}`;
+                option.textContent = `فرع الفارابى ${i}`;
                 branchSelector.appendChild(option);
             }
             
@@ -283,7 +283,7 @@ class ProductManager {
         if (branchNumber >= 1 && branchNumber <= 40) {
             this.selectedBranch = {
                 code: branchCode,
-                name: `فرع الشافي ${branchNumber}`
+                name: `فرع الفارابى ${branchNumber}`
             };
             console.log('✅ تم اختيار الفرع:', this.selectedBranch);
             this.showSelectedBranch(this.selectedBranch);
@@ -619,7 +619,7 @@ class ProductManager {
                     
                     // إظهار رسالة توضح أن البيانات مشتركة
                     if (allProducts.length > 0) {
-                        this.showNotification(`📋 عرض ${allProducts.length} منتج من جميع فروع الشافي`, 'info');
+                        this.showNotification(`📋 عرض ${allProducts.length} منتج من جميع فروع الفارابى`, 'info');
                     }
                 } else {
                     console.log('📝 لا توجد منتجات في أي فرع');
@@ -651,7 +651,7 @@ class ProductManager {
                     <td colspan="7" class="no-data">
                         <i class="fas fa-database"></i>
                         <p>لا توجد منتجات من أي فرع</p>
-                        <small>ستظهر هنا منتجات جميع فروع الشافي</small>
+                        <small>ستظهر هنا منتجات جميع فروع الفارابى</small>
                     </td>
                 </tr>
             `;
